@@ -2,7 +2,7 @@ import suds
 from cache import ExtendedObjectCache
 
 class MMSoapClient:
-    WSDL_URL = "http://soap.m4u.com.au/?wsdl"
+    WSDL_URL = "https://soap.m4u.com.au/?wsdl"
 
     def __init__(self, userId = None, password = None, **kwargs):
         object_cache = ExtendedObjectCache()
