@@ -156,7 +156,7 @@ class ExtendedFileCache(suds.cache.Cache):
             return
         created = dt.fromtimestamp(os.path.getctime(fn))
         d = {self.duration[0]: self.duration[1]}
-        expired = created+timedelta(**d)
+        expired = created + timedelta(**d)
         if expired < dt.now():
             log.debug('%s expired, deleted', fn)
             os.remove(fn)

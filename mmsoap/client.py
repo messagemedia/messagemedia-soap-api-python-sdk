@@ -93,13 +93,18 @@ class MMSoapClient:
 
         return self.client.service.sendMessages(self.authentication, request_body)
 
-    def check_replies(self, maximumReplies=None):
+    def check_replies(self, maximum_replies=None):
         request_body = self.create("CheckRepliesBodyType")
 
-        if maximumReplies is int and maximumReplies >= 0:
-            request_body.maximumReplies = maximumReplies
+        if maximum_replies is int and maximum_replies >= 0:
+            request_body.maximumReplies = maximum_replies
 
-        return self.client.service.checkReplies(self.authentication, request_body).replies.reply
+        reply_response = self.client.service.checkReplies(self.authentication, request_body).replies
+
+        if "reply" in reply_response:
+            return reply_response.reply
+        else:
+            return []
 
     def confirm_replies(self, message_receipt_ids):
         confirm_reply_list = self.create("ConfirmReplyListType")
