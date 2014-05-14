@@ -16,6 +16,7 @@ from cache import ExtendedObjectCache
 
 from suds.transport.http import HttpTransport as SudsHttpTransport
 
+
 class WellBehavedHttpTransport(SudsHttpTransport):
     """HttpTransport which properly obeys the ``*_proxy`` environment variables."""
 
@@ -41,10 +42,11 @@ class WellBehavedHttpTransport(SudsHttpTransport):
         """
         return []
 
+
 class MMSoapClient:
     WSDL_URL = "https://soap.m4u.com.au/?wsdl"
 
-    def __init__(self, userId = None, password = None, **kwargs):
+    def __init__(self, userId=None, password=None, **kwargs):
         object_cache = ExtendedObjectCache()
         object_cache.setduration(days=10)
         if "cache_location" in kwargs:
@@ -57,7 +59,6 @@ class MMSoapClient:
         if userId and password:
             self.authentication.userId = userId
             self.authentication.password = password
-
 
     def create(self, object_name):
         """Short-hand for creating WSDL objects."""
@@ -92,7 +93,7 @@ class MMSoapClient:
 
         return self.client.service.sendMessages(self.authentication, request_body)
 
-    def check_replies(self, maximumReplies = None):
+    def check_replies(self, maximumReplies=None):
         request_body = self.create("CheckRepliesBodyType")
 
         if maximumReplies is int and maximumReplies >= 0:
