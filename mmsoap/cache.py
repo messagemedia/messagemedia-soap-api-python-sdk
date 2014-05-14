@@ -1,6 +1,6 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the (LGPL) GNU Lesser General Public License as
-# published by the Free Software Foundation; either version 3 of the 
+# published by the Free Software Foundation; either version 3 of the
 # License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
@@ -32,6 +32,7 @@ try:
 except:
     import pickle
 
+
 class ExtendedFileCache(suds.cache.Cache):
     """
     A file-based URL cache.
@@ -45,7 +46,7 @@ class ExtendedFileCache(suds.cache.Cache):
     """
     fnprefix = 'suds'
     units = ('months', 'weeks', 'days', 'hours', 'minutes', 'seconds')
-    
+
     def __init__(self, location=None, **duration):
         """
         @param location: The directory for the cached files.
@@ -61,7 +62,7 @@ class ExtendedFileCache(suds.cache.Cache):
         self.duration = (None, 0)
         self.setduration(**duration)
         self.checkversion()
-        
+
     def fnsuffix(self):
         """
         Get the file name suffix
@@ -69,10 +70,10 @@ class ExtendedFileCache(suds.cache.Cache):
         @rtype: str
         """
         return 'gcf'
-        
+
     def setduration(self, **duration):
         """
-        Set the caching duration which defines how long the 
+        Set the caching duration which defines how long the
         file will be cached.
         @param duration: The cached file duration which defines how
             long the file will be cached.  A duration=0 means forever.
@@ -85,7 +86,7 @@ class ExtendedFileCache(suds.cache.Cache):
                 raise Exception('must be: %s' % str(self.units))
             self.duration = arg
         return self
-    
+
     def setlocation(self, location):
         """
         Set the location (directory) for the cached files.
@@ -93,7 +94,7 @@ class ExtendedFileCache(suds.cache.Cache):
         @type location: str
         """
         self.location = location
-            
+
     def mktmp(self):
         """
         Make the I{location} directory if it doesn't already exits.
@@ -104,7 +105,7 @@ class ExtendedFileCache(suds.cache.Cache):
         except:
             log.debug(self.location, exc_info=1)
         return self
-    
+
     def put(self, id, bfr):
         try:
             fn = self.__fn(id)
@@ -115,7 +116,7 @@ class ExtendedFileCache(suds.cache.Cache):
         except:
             log.debug(id, exc_info=1)
             return bfr
-        
+
     def putf(self, id, fp):
         try:
             fn = self.__fn(id)
@@ -127,7 +128,7 @@ class ExtendedFileCache(suds.cache.Cache):
         except:
             log.debug(id, exc_info=1)
             return fp
-        
+
     def get(self, id):
         try:
             f = self.getf(id)
@@ -136,7 +137,7 @@ class ExtendedFileCache(suds.cache.Cache):
             return bfr
         except:
             pass
-    
+
     def getf(self, id):
         try:
             fn = self.__fn(id)
@@ -154,12 +155,12 @@ class ExtendedFileCache(suds.cache.Cache):
         if self.duration[1] < 1:
             return
         created = dt.fromtimestamp(os.path.getctime(fn))
-        d = { self.duration[0]:self.duration[1] }
+        d = {self.duration[0]: self.duration[1]}
         expired = created+timedelta(**d)
         if expired < dt.now():
             log.debug('%s expired, deleted', fn)
             os.remove(fn)
- 
+
     def clear(self):
         for fn in os.listdir(self.location):
             if os.path.isdir(fn):
@@ -167,25 +168,24 @@ class ExtendedFileCache(suds.cache.Cache):
             if fn.startswith(self.fnprefix):
                 log.debug('deleted: %s', fn)
                 os.remove(os.path.join(self.location, fn))
-                
+
     def purge(self, id):
         fn = self.__fn(id)
         try:
             os.remove(fn)
         except:
             pass
-                
+
     def open(self, fn, *args):
         """
         Open the cache file making sure the directory is created.
         """
         self.mktmp()
         return open(fn, *args)
-    
+
     def checkversion(self):
         path = os.path.join(self.location, 'version')
         try:
-            
             f = self.open(path)
             version = f.read()
             f.close()
@@ -195,13 +195,14 @@ class ExtendedFileCache(suds.cache.Cache):
             self.clear()
             f = self.open(path, 'w')
             f.write(suds.__version__)
-            f.close()        
-    
+            f.close()
+
     def __fn(self, id):
         name = id
         suffix = self.fnsuffix()
         fn = '%s-%s.%s' % (self.fnprefix, name, suffix)
         return os.path.join(self.location, fn)
+
 
 class ExtendedObjectCache(ExtendedFileCache):
     """
@@ -210,10 +211,10 @@ class ExtendedObjectCache(ExtendedFileCache):
     @type protocol: int
     """
     protocol = 2
-    
+
     def fnsuffix(self):
         return 'px'
-    
+
     def get(self, id):
         try:
             fp = ExtendedFileCache.getf(self, id)
@@ -223,7 +224,7 @@ class ExtendedObjectCache(ExtendedFileCache):
                 return pickle.load(fp)
         except:
             ExtendedFileCache.purge(self, id)
-    
+
     def put(self, id, object):
         bfr = pickle.dumps(object, self.protocol)
         ExtendedFileCache.put(self, id, bfr)
