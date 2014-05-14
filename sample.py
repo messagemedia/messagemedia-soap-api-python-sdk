@@ -12,9 +12,11 @@
 """
 
 import mmsoap
+import os
+import tempfile
 
 # Create client, specifying cache_location (e.g. /tmp/mmsoap for Linux or C:/temp/mmsoap for Windows)
-client = mmsoap.MMSoapClient("your-userId", "your-password", cache_location="C:/temp/mmsoap")
+client = mmsoap.MMSoapClient("your-userId", "your-password", cache_location=os.path.join(tempfile.gettempdir(), 'mmsoap'))
 
 # Check the user
 print "Check User"
