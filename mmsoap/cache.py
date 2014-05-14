@@ -21,16 +21,11 @@ Modifies the SUDS FileCache class to allow it to work on Windows.
 """
 
 import os
-import sys
 from tempfile import gettempdir as tmp
 from datetime import datetime as dt
 from datetime import timedelta
 
-try:
-    import suds
-except ImportError:
-    print "ERROR: suds python library not found"
-    sys.exit(-1)
+import suds
 
 try:
     import cPickle as pickle
