@@ -11,7 +11,13 @@
     limitations under the License.
 """
 
-import suds
+import sys
+try:
+    import suds
+except ImportError:
+    print "ERROR: suds python library not found"
+    sys.exit(-1)
+
 from cache import ExtendedObjectCache
 
 from suds.transport.http import HttpTransport as SudsHttpTransport
