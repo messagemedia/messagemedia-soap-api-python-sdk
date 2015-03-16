@@ -3,14 +3,13 @@ This library provides a simple interface for sending and receiving messages usin
 
 If you have any issue using this sample code, or would like to report a defect, you could [create a new Issue](https://github.com/messagemedia/messagemedia-python/issues/new) in Github or [Contact us](http://www.messagemedia.com.au/contact-us).
 
-## Installation:
+## Installation
 The `mmsoap` package requires `suds` (0.4) for SOAP interactions. `suds` v0.4.1 and later may not function
 correctly with this code. To install `suds`, run
 
     pip install suds
 
-## Usage:
-
+## Usage
     import mmsoap
 
     client = mmsoap.MMSoapClient("your-userId", "your-password")
@@ -19,7 +18,6 @@ correctly with this code. To install `suds`, run
 For a more in-depth example, look at `sample.py`.
 
 ## Contributing
-
 We welcome contributions from our users. Contributing is easy:
 
   1.  Fork this repo
