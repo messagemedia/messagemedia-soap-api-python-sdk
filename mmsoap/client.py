@@ -43,7 +43,7 @@ class WellBehavedHttpTransport(SudsHttpTransport):
         return []
 
 
-class MMSoapClient:
+class MMSoapClient(object):
     WSDL_URL = "https://soap.m4u.com.au/?wsdl"
 
     def __init__(self, userId=None, password=None, **kwargs):
