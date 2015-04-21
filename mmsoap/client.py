@@ -1,8 +1,8 @@
 """
     Copyright 2014 MessageMedia
     Licensed under the Apache License, Version 2.0 (the "License"); you may not
-    use this file except in compliance with the License.
-    You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+    use this file except in compliance with the License.  You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -16,9 +16,14 @@ from cache import ExtendedObjectCache
 
 from suds.transport.http import HttpTransport as SudsHttpTransport
 
+from .exceptions import *
+
 
 class WellBehavedHttpTransport(SudsHttpTransport):
-    """HttpTransport which properly obeys the ``*_proxy`` environment variables."""
+    """
+    HttpTransport which properly obeys the ``*_proxy`` environment
+    variables.
+    """
 
     def u2handlers(self):
         """Return a list of specific handlers to add.
@@ -27,15 +32,15 @@ class WellBehavedHttpTransport(SudsHttpTransport):
 
         - It has a list of default handlers to use
 
-        - If a subclass or an instance of one of those default handlers is given
-            in ``*handlers``, it overrides the default one.
+        - If a subclass or an instance of one of those default handlers is
+        given in ``*handlers``, it overrides the default one.
 
-        Suds uses a custom {'protocol': 'proxy'} mapping in self.proxy, and adds
-        a ProxyHandler(self.proxy) to that list of handlers.
-        This overrides the default behaviour of urllib2, which would otherwise
-        use the system configuration (environment variables on Linux, System
-        Configuration on Mac OS, ...) to determine which proxies to use for
-        the current protocol, and when not to use a proxy (no_proxy).
+        Suds uses a custom {'protocol': 'proxy'} mapping in self.proxy, and
+        adds a ProxyHandler(self.proxy) to that list of handlers.  This
+        overrides the default behaviour of urllib2, which would otherwise use
+        the system configuration (environment variables on Linux, System
+        Configuration on Mac OS, ...) to determine which proxies to use for the
+        current protocol, and when not to use a proxy (no_proxy).
 
         Thus, passing an empty list will use the default ProxyHandler which
         behaves correctly.
@@ -43,7 +48,7 @@ class WellBehavedHttpTransport(SudsHttpTransport):
         return []
 
 
-class MMSoapClient:
+class MMSoapClient(object):
     WSDL_URL = "https://soap.m4u.com.au/?wsdl"
 
     def __init__(self, userId=None, password=None, **kwargs):
@@ -52,7 +57,9 @@ class MMSoapClient:
         if "cache_location" in kwargs:
             object_cache.setlocation(kwargs["cache_location"])
 
-        self.client = suds.client.Client(self.WSDL_URL, cache=object_cache, transport=WellBehavedHttpTransport())
+        self.client = suds.client.Client(self.WSDL_URL,
+                                         cache=object_cache,
+                                         transport=WellBehavedHttpTransport())
 
         self.authentication = None
         self.authentication = self.create("AuthenticationType")
@@ -71,7 +78,8 @@ class MMSoapClient:
         self.authentication.password = password
 
     def check_user(self):
-        return self.client.service.checkUser(self.authentication).accountDetails
+        return self.client.service.checkUser(self.authentication)\
+            .accountDetails
 
     def send_messages(self, recipients, content):
         recipients_type = self.create("RecipientsType")
@@ -91,7 +99,29 @@ class MMSoapClient:
         request_body = self.create("SendMessagesBodyType")
         request_body.messages = message_list
 
-        return self.client.service.sendMessages(self.authentication, request_body)
+        response = self.client.service.sendMessages(self.authentication,
+                                                    request_body)
+        self.raise_for_response(response)
+
+        return response
+
+    def raise_for_response(self, response):
+        try:
+            code = response.errors[0][0]._code
+
+            if code == 'invalidRecipient':
+                raise InvalidRecipientException()
+            elif code == 'recipientBlocked':
+                raise RecipientBlockedException()
+            elif code == 'emptyMessageContent':
+                raise EmptyMessageContentException()
+            elif code == 'other':
+                raise OtherMMSOAPException()
+            else:
+                pass
+
+        except AttributeError:
+            pass
 
     def check_replies(self, maximum_replies=None):
         request_body = self.create("CheckRepliesBodyType")
@@ -99,7 +129,8 @@ class MMSoapClient:
         if maximum_replies is int and maximum_replies >= 0:
             request_body.maximumReplies = maximum_replies
 
-        reply_response = self.client.service.checkReplies(self.authentication, request_body).replies
+        reply_response = self.client.service.checkReplies(self.authentication,
+                                                          request_body).replies
 
         if "reply" in reply_response:
             return reply_response.reply
@@ -115,4 +146,5 @@ class MMSoapClient:
         request_body = self.create("ConfirmRepliesBodyType")
         request_body.replies = confirm_reply_list
 
-        return self.client.service.confirmReplies(self.authentication, request_body)
+        return self.client.service.confirmReplies(self.authentication,
+                                                  request_body)
