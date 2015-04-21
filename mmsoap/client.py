@@ -16,6 +16,8 @@ from cache import ExtendedObjectCache
 
 from suds.transport.http import HttpTransport as SudsHttpTransport
 
+from .exceptions import *
+
 
 class WellBehavedHttpTransport(SudsHttpTransport):
     """
@@ -97,8 +99,29 @@ class MMSoapClient(object):
         request_body = self.create("SendMessagesBodyType")
         request_body.messages = message_list
 
-        return self.client.service.sendMessages(self.authentication,
-                                                request_body)
+        response = self.client.service.sendMessages(self.authentication,
+                                                    request_body)
+        self.raise_for_response(response)
+
+        return response
+
+    def raise_for_response(self, response):
+        try:
+            code = response.errors[0][0]._code
+
+            if code == 'invalidRecipient':
+                raise InvalidRecipientException()
+            elif code == 'recipientBlocked':
+                raise RecipientBlockedException()
+            elif code == 'emptyMessageContent':
+                raise EmptyMessageContentException()
+            elif code == 'other':
+                raise OtherMMSOAPException()
+            else:
+                pass
+
+        except AttributeError:
+            pass
 
     def check_replies(self, maximum_replies=None):
         request_body = self.create("CheckRepliesBodyType")
