@@ -81,7 +81,24 @@ class MMSoapClient(object):
         return self.client.service.checkUser(self.authentication)\
             .accountDetails
 
-    def send_messages(self, recipients, content):
+    def send_messages(self, recipients, content, send_mode='normal'):
+        """
+        Send a message to `recipients`.
+
+        Arguments:
+        recipients -- iterable of recipient numbers
+        content -- message content
+
+        Keyword arguments:
+        send_mode -- used for testing. One of:
+            * normal (default) -- send as normal
+            * dropAll -- drop (not send) the requested messages, return
+              random errors and successes
+            * dropAllWithErrors -- drop the requested messages,
+              return errors
+            * dropAllWithSuccess -- drop the requested messages,
+              return success
+        """
         recipients_type = self.create("RecipientsType")
 
         for recipient in recipients:
@@ -95,6 +112,7 @@ class MMSoapClient(object):
 
         message_list = self.create("MessageListType")
         message_list.message = [message]
+        message_list._sendMode = send_mode
 
         request_body = self.create("SendMessagesBodyType")
         request_body.messages = message_list
