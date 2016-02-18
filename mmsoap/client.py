@@ -1,5 +1,5 @@
 """
-Copyright 2014 MessageMedia
+Copyright 2014-2016 MessageMedia
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License.  You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -26,7 +26,7 @@ class MMSoapClient(object):
     This class is a wrapper for the Suds SOAP client and implements the operations
     found in the following wsdl: http://soap.dev.m4u.com.au/?wsdl'.
     """
-    WSDL_URL = 'http://soap.dev.m4u.com.au/?wsdl'
+    WSDL_URL = "https://soap.m4u.com.au/?wsdl"
 
     def __init__(self, userId=None, password=None, **kwargs):
         """

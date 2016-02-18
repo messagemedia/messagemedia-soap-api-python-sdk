@@ -1,5 +1,5 @@
 """
-Copyright 2014 MessageMedia
+Copyright 2014-2016 MessageMedia
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,10 +16,8 @@ import os
 import tempfile
 from datetime import datetime, timedelta
 
-# user = 'your-userId'
-# password = 'your-password'
-user = 'MessageUPtyLt461'
-password = 'liu@MM!'
+user = 'your-userId'
+password = 'your-password'
 
 # Create client, specifying cache_location (e.g. /tmp/mmsoap for Linux or C:/temp/mmsoap for Windows)
 client = mmsoap.MMSoapClient(user, password,
