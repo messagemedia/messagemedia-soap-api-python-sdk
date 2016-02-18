@@ -24,7 +24,7 @@ class MMSoapClient(object):
     Message Media SOAP Client.
 
     This class is a wrapper for the Suds SOAP client and implements the operations
-    found in the following wsdl: http://soap.dev.m4u.com.au/?wsdl'.
+    found in the following wsdl: http://soap.m4u.com.au/?wsdl'.
     """
     WSDL_URL = "https://soap.m4u.com.au/?wsdl"
 
