@@ -118,7 +118,6 @@ class MMSoapClient(object):
 
         return response
 
-    @staticmethod
     def raise_for_response(response):
         """
         Raise an exception for a given error code in a SOAP response.
