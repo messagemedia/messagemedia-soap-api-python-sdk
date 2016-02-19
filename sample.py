@@ -16,16 +16,11 @@ import os
 import tempfile
 from datetime import datetime, timedelta
 
-user = 'your-userId'
-password = 'your-password'
-
-# Create client, specifying cache_location (e.g. /tmp/mmsoap for Linux or C:/temp/mmsoap for Windows)
-client = mmsoap.MMSoapClient(user, password,
-                             cache_location=os.path.join(tempfile.gettempdir(), 'mmsoap'))
-
 
 def check_user():
     """ Example showing the check_user function. Prints credit limit and credit remaining. """
+    client = create_client()
+
     details = client.check_user()
     print "Credit limit: %d / Credit remaining: %d" % (details._creditLimit, details._creditRemaining)
 
@@ -35,6 +30,8 @@ def send_messages():
     Example showing the send_messages function. Sends a single message to 1 recipient.
     Prints the resulting sent, scheduled and failed to the console.
     """
+    client = create_client()
+
     result = client.send_messages(["+61412345671"], "Hello from messagemedia-python!")
     print "Sent %d messages, scheduled %d messages, %d messages failed" % (
         result._sent, result._scheduled, result._failed)
@@ -45,6 +42,8 @@ def check_confirm_replies():
     Example showing checking and confirming of replies. Retrieves replies first via a call to check_replies
     then iterates through the result. Requests user input and confirms each individually calling confirm_replies.
     """
+    client = create_client()
+
     replies = client.check_replies()
 
     for reply in replies:
@@ -60,6 +59,8 @@ def check_confirm_reports():
     Example showing checking and confirming of reports. Retrieves reports first via a call to check_reports
     then iterates through the result. Requests user input and confirms each individually calling confirm_reports.
     """
+    client = create_client()
+
     reports = client.check_reports()
 
     for report in reports:
@@ -76,6 +77,8 @@ def delete_scheduled_messages():
     and a message sequenceNumber. This is used as the id on a request to delete_scheduled_messages.
     Prints results to the console.
     """
+    client = create_client()
+
     # first schedule a message
     seq = 1
     now = datetime.utcnow()
@@ -91,6 +94,8 @@ def delete_scheduled_messages():
 
 def block_numbers():
     """ Example code showing block numbers functionality. Prints number of blocked and failed to the console. """
+    client = create_client()
+
     result = client.block_numbers(["+61412345678"])
     print 'Blocked: %d, failed: %d' % (result._blocked, result._failed)
 
@@ -100,6 +105,8 @@ def get_blocked_numbers():
     Example code showing the get blocked numbers functionality. First makes a call to block a number then
     retrieves the list of all currently blocked and prints it to the console.
     """
+    client = create_client()
+
     client.block_numbers(["+61412345678"])
     # will retrieve a maximum of 10 blocked numbers
     recipients = client.get_blocked_numbers(10)
@@ -113,6 +120,8 @@ def unblock_numbers():
     unblocks the first one. Prints the results to the console and then retrieves and prints out the remaining
     blocked numbers.
     """
+    client = create_client()
+
     # block some numbers
     recipients = ["+61412345678", "+61412345676", "+61412345675"]
     result = client.block_numbers(recipients)
@@ -128,6 +137,17 @@ def unblock_numbers():
     blocked = client.get_blocked_numbers()
     for recipient in blocked:
         print 'Remaining blocked:', recipient.value
+
+
+def create_client():
+    """
+    Creates a SOAP client and configures cache_location (e.g. /tmp/mmsoap for Linux or C:/temp/mmsoap for Windows)
+    :return: Initialised MMSoapClient
+    """
+    user = 'your-userId'
+    password = 'your-password'
+
+    return mmsoap.MMSoapClient(user, password, cache_location=os.path.join(tempfile.gettempdir(), 'mmsoap'))
 
 
 if __name__ == '__main__':
