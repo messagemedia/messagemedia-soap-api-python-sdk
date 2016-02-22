@@ -70,7 +70,7 @@ class MMSoapClient(object):
         """
         return self.client.service.checkUser(self.authentication).accountDetails
 
-    def send_messages(self, recipients, content, send_mode='normal', scheduled=None, report=None, id=None):
+    def send_messages(self, recipients, content, send_mode='normal', scheduled=None, report=None, seq=None):
         """
         Send a single message to `recipients`.
 
@@ -91,14 +91,15 @@ class MMSoapClient(object):
         for recipient in recipients:
             this_recipient = self.create('RecipientType')
             this_recipient.value = recipient
+            # add uid here
             recipients_type.recipient.append(this_recipient)
 
         message = self.create('MessageType')
         message.recipients = recipients_type
         message.content = content
 
-        if id:
-            message._sequenceNumber = id
+        if seq:
+            message._sequenceNumber = seq
 
         if scheduled:
             message.scheduled = scheduled
@@ -223,7 +224,7 @@ class MMSoapClient(object):
         Delete scheduled messages.
 
         :param message_ids: Iterable of message ids to be deleted. These must correspond to message id's previously
-                            returned from the send_messages function where a scheduled date was set.
+                            used in the send_messages function where a scheduled date was set.
 
         :return: Response containing the count of unscheduled messages.
         """
