@@ -115,11 +115,12 @@ class MMSoapClient(object):
         request_body.messages = message_list
 
         response = self.client.service.sendMessages(self.authentication, request_body)
+
         self.raise_for_response(response)
 
         return response
 
-    def raise_for_response(response):
+    def raise_for_response(self, response):
         """
         Raise an exception for a given error code in a SOAP response.
 

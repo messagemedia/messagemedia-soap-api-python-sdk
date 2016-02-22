@@ -103,7 +103,7 @@ def unblock_numbers():
     unblocks the first one. Prints the results to the console and then retrieves and prints out the remaining
     blocked numbers.
     """
-    print 'Unblocking numbers'
+    print 'Adding some blocked numbers'
     client = create_client()
     # block some numbers
     recipients = ["+61412345678", "+61412345676", "+61412345675"]
