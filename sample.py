@@ -17,6 +17,17 @@ import tempfile
 from datetime import datetime, timedelta
 
 
+def create_client():
+    """
+    Creates a SOAP client and configures cache_location (e.g. /tmp/mmsoap for Linux or C:/temp/mmsoap for Windows)
+    :return: Initialised MMSoapClient
+    """
+    user = 'your-userId'
+    password = 'your-password'
+
+    return mmsoap.MMSoapClient(user, password, cache_location=os.path.join(tempfile.gettempdir(), 'mmsoap'))
+
+
 def check_user():
     """ Example showing the check_user function. Prints credit limit and credit remaining. """
     print 'Checking user'
@@ -122,17 +133,6 @@ def unblock_numbers():
     blocked = client.get_blocked_numbers()
     for recipient in blocked:
         print 'Remaining blocked:', recipient.value
-
-
-def create_client():
-    """
-    Creates a SOAP client and configures cache_location (e.g. /tmp/mmsoap for Linux or C:/temp/mmsoap for Windows)
-    :return: Initialised MMSoapClient
-    """
-    user = 'your-userId'
-    password = 'your-password'
-
-    return mmsoap.MMSoapClient(user, password, cache_location=os.path.join(tempfile.gettempdir(), 'mmsoap'))
 
 
 if __name__ == '__main__':
