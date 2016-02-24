@@ -123,9 +123,9 @@ def unblock_numbers():
     print 'Blocked: %d, failed: %d' % (result._blocked, result._failed)
 
     # unblock the first item only
-    recipient = recipients[0]
-    print 'Unblocking:', recipient
-    result = client.unblock_numbers(recipient)
+    recipients = recipients[:1]
+    print 'Unblocking:', recipients
+    result = client.unblock_numbers(recipients)
 
     print 'Unblocked: %d, failed: %d' % (result._unblocked, result._failed)
 
